@@ -8,10 +8,10 @@ import (
 )
 
 var (
-	LogPath     = "runtime/logs/" //日志文件的存放路径(相对于working directory的路径)
-	LogFileName = "log"           //日志文件的名字
-	LogFileExt  = "log"           //扩展名
-	TimeFormat  = "20060102"      //日期格式
+	LogPath     = "../runtime/logs/" //日志文件的存放路径(相对于working directory的路径)
+	LogFileName = "log"              //日志文件的名字
+	LogFileExt  = "log"              //扩展名
+	TimeFormat  = "20060102"         //日期格式
 )
 
 func getLogFilePath() string {
