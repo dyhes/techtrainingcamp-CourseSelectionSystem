@@ -2,7 +2,7 @@ package types
 
 // 说明：
 // 1. 所提到的「位数」均以字节长度为准
-// 2. 所有的 ID 均为 int64（以 string 方式表现）
+// 2. 所有的 UserID 均为 int64（以 string 方式表现）
 
 // 通用结构
 
@@ -10,24 +10,23 @@ type ErrNo int
 
 const (
 	OK                 ErrNo = 0
-	ParamInvalid       ErrNo = 1   // 参数不合法
-	UserHasExisted     ErrNo = 2   // 该 Username 已存在
-	UserHasDeleted     ErrNo = 3   // 用户已删除
-	UserNotExisted     ErrNo = 4   // 用户不存在
-	WrongPassword      ErrNo = 5   // 密码错误
-	LoginRequired      ErrNo = 6   // 用户未登录
-	CourseNotAvailable ErrNo = 7   // 课程已满
-	CourseHasBound     ErrNo = 8   // 课程已绑定过
-	CourseNotBind      ErrNo = 9   // 课程未绑定过
-	PermDenied         ErrNo = 10   // 没有操作权限
-	StudentNotExisted  ErrNo = 11   // 学生不存在
-	CourseNotExisted   ErrNo = 12   // 课程不存在
-	StudentHasNoCourse ErrNo = 13  // 学生没有课程
-	StudentHasCourse   ErrNo = 14  // 学生有课程
+	ParamInvalid       ErrNo = 1  // 参数不合法
+	UserHasExisted     ErrNo = 2  // 该 Username 已存在
+	UserHasDeleted     ErrNo = 3  // 用户已删除
+	UserNotExisted     ErrNo = 4  // 用户不存在
+	WrongPassword      ErrNo = 5  // 密码错误
+	LoginRequired      ErrNo = 6  // 用户未登录
+	CourseNotAvailable ErrNo = 7  // 课程已满
+	CourseHasBound     ErrNo = 8  // 课程已绑定过
+	CourseNotBind      ErrNo = 9  // 课程未绑定过
+	PermDenied         ErrNo = 10 // 没有操作权限
+	StudentNotExisted  ErrNo = 11 // 学生不存在
+	CourseNotExisted   ErrNo = 12 // 课程不存在
+	StudentHasNoCourse ErrNo = 13 // 学生没有课程
+	StudentHasCourse   ErrNo = 14 // 学生有课程
 
-	UnknownError       ErrNo = 255 // 未知错误
+	UnknownError ErrNo = 255 // 未知错误
 )
-
 
 type ResponseMeta struct {
 	Code ErrNo
@@ -41,8 +40,8 @@ type TMember struct {
 }
 
 type TCourse struct {
-	CourseID string
-	Name     string
+	CourseID  string
+	Name      string
 	TeacherID string
 }
 
@@ -119,7 +118,7 @@ type UpdateMemberResponse struct {
 }
 
 // 删除成员信息
-// 成员删除后，该成员不能够被登录且不应该不可见，ID 不可复用
+// 成员删除后，该成员不能够被登录且不应该不可见，UserID 不可复用
 
 type DeleteMemberRequest struct {
 	UserID string
@@ -242,7 +241,7 @@ type ScheduleCourseRequest struct {
 
 type ScheduleCourseResponse struct {
 	Code ErrNo
-	Data map[string]string   // key 为 teacherID , val 为老师最终绑定的课程 courseID
+	Data map[string]string // key 为 teacherID , val 为老师最终绑定的课程 courseID
 }
 
 type BookCourseRequest struct {
