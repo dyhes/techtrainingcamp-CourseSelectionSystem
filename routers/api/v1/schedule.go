@@ -136,7 +136,7 @@ func BindCourse(c *gin.Context) {
 		appG.Response(http.StatusOK, e.ParamInvalid, nil)
 		return
 	}
-	bound, err := models.IsCourseBound(courseID)
+	bound, _, err := models.IsCourseBound(courseID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			appG.Response(http.StatusOK, e.CourseNotExisted, nil)
@@ -193,7 +193,7 @@ func UnBindCourse(c *gin.Context) {
 		appG.Response(http.StatusOK, e.ParamInvalid, nil)
 		return
 	}
-	bound, err := models.IsCourseBound(courseID)
+	bound, teacherID, err := models.IsCourseBound(courseID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			appG.Response(http.StatusOK, e.CourseNotExisted, nil)
@@ -207,20 +207,21 @@ func UnBindCourse(c *gin.Context) {
 		return
 	}
 
-	//课程存在且被绑定时，解绑课程
-	teacherID, err := strconv.ParseUint(request.TeacherID, 10, 64)
+	//课程存在且被绑定时，尝试解绑课程
+	teacherIDReq, err := strconv.ParseUint(request.TeacherID, 10, 64)
 	if err != nil {
 		logging.Error(err)
 		appG.Response(http.StatusOK, e.ParamInvalid, nil)
 		return
 	}
-	err = models.UnBindCourse(courseID, teacherID)
+	if teacherID != teacherIDReq {
+		appG.Response(http.StatusOK, e.UnknownError, nil)
+		return
+	}
+
+	err = models.UnBindCourse(courseID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			appG.Response(http.StatusOK, e.UnknownError, nil)
-		} else {
-			appG.Response(http.StatusOK, e.UnknownError, nil)
-		}
+		appG.Response(http.StatusOK, e.UnknownError, nil)
 		return
 	}
 	model.Rdb.Set(model.Ctx, fmt.Sprintf("courseteacher%d", courseID), 0, redis.KeepTTL)

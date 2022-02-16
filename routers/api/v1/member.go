@@ -16,7 +16,7 @@ import (
 )
 
 type CreateMemberRequest struct {
-	Nickname string `json:"Nickname" valid:"Required;MinSize(4);MaxSize(20)"`
+	Nickname string `json:"Nickname" valid:"Required;Match(/^[A-Za-z]{4,20}$/)"`
 	Username string `json:"Username" valid:"Required;Match(/^[A-Za-z]{8,20}$/)"`
 	Password string `json:"Password" valid:"Required;MinSize(8);MaxSize(20);PasswordCheck"`
 	UserType int    `json:"UserType" valid:"Required;Range(1,3)"`

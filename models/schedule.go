@@ -55,10 +55,10 @@ func IsCourseExistByID(id uint64) (bool, error) {
 }
 
 //根据课程ID查询课程是否已经被绑定
-//课程不存在时，返回false,gorm.ErrRecordNotFound
-//课程存在，但未绑定时，返回false,nil
-//课程存在，但已绑定时，返回true,nil
-func IsCourseBound(id uint64) (bool, error) {
+//课程不存在时，返回false,0,gorm.ErrRecordNotFound
+//课程存在，但未绑定时，返回false,0,nil
+//课程存在，但已绑定时，返回true,teacherID,nil
+func IsCourseBound(id uint64) (bool, uint64, error) {
 	var course Course
 	err := Db.Model(&Course{}).Select("teacher_id").
 		Where("course_id = ?", id).First(&course).Error
@@ -66,12 +66,12 @@ func IsCourseBound(id uint64) (bool, error) {
 		if err != gorm.ErrRecordNotFound {
 			logging.Error(err)
 		}
-		return false, err
+		return false, 0, err
 	}
 	if course.TeacherID > 0 {
-		return true, nil
+		return true, course.TeacherID, nil
 	}
-	return false, nil
+	return false, 0, nil
 }
 
 //创建课程并返回课程的ID
@@ -120,16 +120,8 @@ func BindCourse(courseID, teacherID uint64) error {
 }
 
 //解绑课程。即将Course表对应课程的teacher_id字段更新为0
-func UnBindCourse(courseID, teacherID uint64) error {
-	var course Course
-	err := Db.Model(&Course{}).Select("course_id").
-		Where("course_id = ? AND teacher_id = ?", courseID, teacherID).First(&course).Error
-	if err != nil {
-		logging.Error(err)
-		return err
-	}
-
-	err = Db.Model(&Course{}).Where("course_id = ? AND teacher_id = ?", courseID, teacherID).
+func UnBindCourse(courseID uint64) error {
+	err := Db.Model(&Course{}).Where("course_id = ?", courseID).
 		Update("teacher_id", 0).Error
 
 	if err != nil {
